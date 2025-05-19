@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #6f42c1;
+  --color-secondary: #007BFF;
+}
+
+button {
+  @apply cursor-pointer;
+}
+
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
