@@ -38,14 +38,15 @@ const baseQueryWithRefreshToken: BaseQueryFn<
     });
 
     const data = await res.json();
+    console.log("🚀 ~ >= ~ data:", data)
 
-    if (data?.data?.accessToken) {
+    if (data?.data) {
       const user = (api.getState() as RootState).auth.user;
 
       api.dispatch(
         setCredentials({
           user,
-          accessToken: data.data.accessToken,
+          accessToken: data.data,
         })
       );
 

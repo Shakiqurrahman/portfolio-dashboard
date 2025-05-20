@@ -4,6 +4,7 @@ import { FaHome } from "react-icons/fa";
 import { GoProject } from "react-icons/go";
 import { TbLogs } from "react-icons/tb";
 import { NavLink, useNavigate } from "react-router";
+import { useLogoutMutation } from "../Redux/features/auth/authApi";
 import { logoutUser } from "../Redux/features/auth/authSlice";
 import { useAppDispatch } from "../Redux/hook";
 
@@ -13,10 +14,11 @@ interface ISidebarProps {
 const Sidebar = ({ toggleSidebar }: ISidebarProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  // const [logout] = useLogoutMutation();
+  const [logout] = useLogoutMutation();
 
   const handleLogout = async () => {
-    // await logout(null);
+    const res = await logout(null);
+    console.log("🚀 ~ handleLogout ~ res:", res)
     dispatch(logoutUser());
     navigate("/sign-in");
   };

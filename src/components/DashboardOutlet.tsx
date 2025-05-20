@@ -19,16 +19,16 @@ const DashboardOutlet = ({
       </div>
       <div
         className={`flex-1 bg-[#f7f7f7] rounded-xl lg:ml-3 text-black min-h-screen  ${
-          sidebarOpen ? "opacity-70" : "opacity-100"
+          sidebarOpen ? "opacity-60" : "opacity-100"
         } lg:opacity-100 duration-300`}
       >
         <button
-          className="lg:hidden absolute top-4 left-2 sm:top-5 sm:left-3 bg-blue-400 rounded-full p-2 text-white"
+          className="lg:hidden absolute top-4 left-2 sm:top-5 sm:left-3 bg-primary rounded-full p-2 text-white"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <BiMenu className="size-6" />
         </button>
-        {children}
+        <div className="p-6">{children}</div>
       </div>
     </div>
   );

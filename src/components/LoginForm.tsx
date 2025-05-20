@@ -34,7 +34,6 @@ const LoginForm = () => {
           dispatch(setCredentials(result?.data));
           navigate("/");
         }
-        console.log("🚀 ~ handleSubmit ~ result:", result);
         toast.success("Login successful!");
       } catch (error) {
         console.error("Operation failed:", error);
