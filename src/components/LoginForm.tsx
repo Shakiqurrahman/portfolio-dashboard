@@ -1,48 +1,57 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useNavigate } from "react-router";
+import { useLoginMutation } from "../Redux/features/auth/authApi";
+import { setCredentials } from "../Redux/features/auth/authSlice";
+import { useAppDispatch } from "../Redux/hook";
 
 const LoginForm = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const [loginUser, { isLoading: isLoggingIn }] = useLoginMutation();
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const isLoggingIn = false;
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const { email, password } = form;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { email, password } = form;
 
-//     if (email && password) {
-//       try {
-//         const result = await loginUser({ email, password }).unwrap();
-//         if (result.success) {
-//           dispatch(setAccessToken(result.accessToken));
-//           dispatch(setUserData(result.user));
-//           navigate("/admin-dashboard");
-//         }
-//         toast.success("Login successful!");
-//       } catch (error) {
-//         console.error("Operation failed:", error);
-//         toast.error("An error occurred. Please try again.");
-//       }
-//     } else {
-//       toast.error("All Fields Are Required!!!");
-//     }
-//   };
+    if (email && password) {
+      try {
+        const result = await loginUser({ email, password }).unwrap();
+        if (result.success) {
+          dispatch(setCredentials(result?.data));
+          navigate("/");
+        }
+        console.log("🚀 ~ handleSubmit ~ result:", result);
+        toast.success("Login successful!");
+      } catch (error) {
+        console.error("Operation failed:", error);
+        toast.error("An error occurred. Please try again.");
+      }
+    } else {
+      toast.error("All Fields Are Required!!!");
+    }
+  };
   return (
     <div className="max-width font-poppins flex flex-col justify-center items-center h-screen">
       <form
         className="max-w-[500px] w-full mx-auto p-8 py-10 bg-white shadow-box rounded-lg"
-        // onSubmit={handleSubmit}
+        onSubmit={handleSubmit}
       >
         <h1 className="text-center text-3xl font-semibold select-none">
-          Login
+          Sign In
         </h1>
         <div className="relative mt-5">
           <input
@@ -61,7 +70,7 @@ const LoginForm = () => {
                 }
             `}
           >
-            Username/Email
+            Email
           </label>
         </div>
         <div className="relative mt-5">
@@ -93,12 +102,12 @@ const LoginForm = () => {
         <button
           type="submit"
           disabled={isLoggingIn}
-          className="disabled:bg-primary-blue flex items-center justify-center w-full text-center h-11 bg-primary-blue hover:bg-primary-blue text-white font-medium mt-5 duration-300 rounded select-none"
+          className="disabled:bg-primary/60 flex items-center justify-center w-full text-center h-11 bg-primary hover:bg-primary/85 text-white font-medium mt-5 duration-300 rounded select-none"
         >
           {isLoggingIn ? (
             <CgSpinner className="animate-spin text-xl" />
           ) : (
-            "Login"
+            "Sign In"
           )}
         </button>
       </form>

@@ -4,16 +4,21 @@ import { FaHome } from "react-icons/fa";
 import { GoProject } from "react-icons/go";
 import { TbLogs } from "react-icons/tb";
 import { NavLink, useNavigate } from "react-router";
+import { logoutUser } from "../Redux/features/auth/authSlice";
+import { useAppDispatch } from "../Redux/hook";
 
 interface ISidebarProps {
   toggleSidebar: () => void;
 }
 const Sidebar = ({ toggleSidebar }: ISidebarProps) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  // const [logout] = useLogoutMutation();
 
   const handleLogout = async () => {
-    // signOut();
-    navigate("/login");
+    // await logout(null);
+    dispatch(logoutUser());
+    navigate("/sign-in");
   };
   return (
     <div className="bg-[#f7f7f7] min-h-screen p-4 rounded-xl sticky top-2">
@@ -32,7 +37,7 @@ const Sidebar = ({ toggleSidebar }: ISidebarProps) => {
         <li>
           <NavLink
             onClick={toggleSidebar}
-            to="/dashboard"
+            to="/"
             className={({ isActive }) =>
               `flex items-center space-x-2 p-3 rounded-md hover:bg-gray-200 text-gray-700 duration-300 ${
                 isActive ? "bg-gray-200" : ""
@@ -46,7 +51,7 @@ const Sidebar = ({ toggleSidebar }: ISidebarProps) => {
         <li>
           <NavLink
             onClick={toggleSidebar}
-            to="/dashboard/blog-management"
+            to="/blog-management"
             className={({ isActive }) =>
               `flex items-center space-x-2 p-3 rounded-md hover:bg-gray-200 text-gray-700 duration-300 ${
                 isActive ? "bg-gray-200" : ""
@@ -60,7 +65,7 @@ const Sidebar = ({ toggleSidebar }: ISidebarProps) => {
         <li>
           <NavLink
             onClick={toggleSidebar}
-            to="/dashboard/project-management"
+            to="/project-management"
             className={({ isActive }) =>
               `flex items-center space-x-2 p-3 rounded-md hover:bg-gray-200 text-gray-700 duration-300 ${
                 isActive ? "bg-gray-200" : ""
@@ -74,7 +79,7 @@ const Sidebar = ({ toggleSidebar }: ISidebarProps) => {
         <li>
           <NavLink
             onClick={toggleSidebar}
-            to="/dashboard/user-messages"
+            to="/user-messages"
             className={({ isActive }) =>
               `flex items-center space-x-2 p-3 rounded-md hover:bg-gray-200 text-gray-700 duration-300 ${
                 isActive ? "bg-gray-200" : ""
