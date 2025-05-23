@@ -1,3 +1,4 @@
+import { ImSpinner8 } from "react-icons/im";
 import { PiPlus } from "react-icons/pi";
 import { Link } from "react-router";
 import { useGetAllProjectsQuery } from "../Redux/features/project/projectApi";
@@ -5,7 +6,7 @@ import ProjectCard from "../components/ProjectCard";
 import type { IProject } from "../types";
 
 const ProjectManagementPage = () => {
-  const { data: response } = useGetAllProjectsQuery(null);
+  const { data: response, isLoading } = useGetAllProjectsQuery(null);
   const projects = response?.data || [];
 
   return (
@@ -24,10 +25,19 @@ const ProjectManagementPage = () => {
       </div>
       <p className="text-sm text-gray-600">Display all the project list.</p>
       <div className="mt-5 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {projects?.map((project: IProject) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
+        {!isLoading && projects?.length === 0 ? (
+          <p>Project not found!</p>
+        ) : (
+          projects?.map((project: IProject) => (
+            <ProjectCard key={project.id} project={project} />
+          ))
+        )}
       </div>
+      {isLoading && (
+        <div className="h-screen w-full flex justify-center items-center absolute top-0 left-0">
+          <ImSpinner8 className="animate-spin text-black text-4xl" />
+        </div>
+      )}
     </section>
   );
 };
