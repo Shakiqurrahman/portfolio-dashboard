@@ -24,7 +24,7 @@ const BlogManagementPage = () => {
         </Link>
       </div>
       <p className="text-sm text-gray-600">Display all the blog list.</p>
-      <div className="mt-5 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="mt-5 grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
         {!isLoading && blogs?.length === 0 ? (
           <p>Blog not found!</p>
         ) : (

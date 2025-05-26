@@ -1,33 +1,38 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
 import { z } from "zod";
-import { useCreateProjectMutation } from "../Redux/features/project/projectApi";
+import {
+  useGetProjectByIdQuery,
+  useUpdateProjectMutation,
+} from "../Redux/features/project/projectApi";
 
+// --- Zod Schema ---
 const projectSchema = z.object({
   title: z.string().min(1, "Title is required"),
   subTitle: z.string().optional(),
   description: z.string().min(1, "Description is required"),
-  sourceLink: z
-    .string()
-    .url("Invalid source link")
-    .optional()
-    .or(z.literal("")),
+  sourceLink: z.string().url("Invalid source link").optional().or(z.literal("")),
   liveLink: z.string().url("Invalid live link").optional().or(z.literal("")),
   thumbnail: z
     .any()
-    .refine((file) => !file || file instanceof File, "Invalid file")
+    .refine((file) => !file || file instanceof File, {
+      message: "Invalid file",
+    })
     .optional(),
 });
 
 type ProjectFormData = z.infer<typeof projectSchema>;
 
-const AddProjectPage = () => {
+const EditProjectPage = () => {
+  const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const [addProject, { isLoading }] = useCreateProjectMutation();
   const [preview, setPreview] = useState<string | null>(null);
+
+  const { data, isLoading: isFetching } = useGetProjectByIdQuery(projectId);
+  const [updateProject, { isLoading: isUpdating }] = useUpdateProjectMutation();
 
   const {
     register,
@@ -38,22 +43,40 @@ const AddProjectPage = () => {
     resolver: zodResolver(projectSchema),
   });
 
-  const onSubmit = async (data: ProjectFormData) => {
-    const formData = new FormData();
-    formData.append("title", data.title);
-    if (data.subTitle) formData.append("subTitle", data.subTitle);
-    formData.append("description", data.description);
-    if (data.sourceLink) formData.append("sourceLink", data.sourceLink);
-    if (data.liveLink) formData.append("liveLink", data.liveLink);
-    formData.append("thumbnail", data.thumbnail);
+  // Populate the form once data is fetched
+  useEffect(() => {
+    if (data) {
+      setValue("title", data.title);
+      setValue("subTitle", data.subTitle ?? "");
+      setValue("description", data.description);
+      setValue("sourceLink", data.sourceLink ?? "");
+      setValue("liveLink", data.liveLink ?? "");
+      if (data.thumbnail) {
+        setPreview(data.thumbnail);
+      }
+    } else if (!data && !isFetching) {
+      navigate("/not-found");
+    }
+  }, [data, setValue, isFetching, navigate]);
+
+  const onSubmit = async (formData: ProjectFormData) => {
+    if (!projectId) return;
+
+    const payload = new FormData();
+    payload.append("title", formData.title);
+    if (formData.subTitle) payload.append("subTitle", formData.subTitle);
+    payload.append("description", formData.description);
+    if (formData.sourceLink) payload.append("sourceLink", formData.sourceLink);
+    if (formData.liveLink) payload.append("liveLink", formData.liveLink);
+    if (formData.thumbnail) payload.append("thumbnail", formData.thumbnail);
 
     try {
-      await addProject(formData).unwrap();
-      toast.success("Project created successfully!");
+      await updateProject({ projectId, payload }).unwrap();
+      toast.success("Project updated successfully!");
       navigate("/project-management");
-    } catch (err) {
-      console.error("Submit failed:", err);
-      toast.error("Failed to create project!");
+    } catch (error) {
+      console.error("Update failed:", error);
+      toast.error("Failed to update project!");
     }
   };
 
@@ -68,9 +91,11 @@ const AddProjectPage = () => {
     }
   };
 
+  if (isFetching) return <p className="mt-5">Loading project details...</p>;
+
   return (
     <section className="mt-5">
-      <h1 className="text-2xl font-semibold">Add Project Details</h1>
+      <h1 className="text-2xl font-semibold">Edit Project Details</h1>
       <form className="mt-5 space-y-4" onSubmit={handleSubmit(onSubmit)}>
         <div>
           <input
@@ -80,7 +105,7 @@ const AddProjectPage = () => {
             className="outline-none border border-gray-300 px-4 py-2 rounded-lg w-full"
           />
           {errors.title && (
-            <p className="text-red-500 mt-1 text-sm">{errors.title.message}</p>
+            <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
           )}
         </div>
 
@@ -92,7 +117,7 @@ const AddProjectPage = () => {
             className="outline-none border border-gray-300 px-4 py-2 rounded-lg w-full"
           />
           {errors.description && (
-            <p className="text-red-500 text-sm">{errors.description.message}</p>
+            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
           )}
         </div>
 
@@ -104,13 +129,10 @@ const AddProjectPage = () => {
           />
           {errors.thumbnail?.message &&
             typeof errors.thumbnail.message === "string" && (
-              <p className="text-red-500 mt-1 text-sm">
-                {errors.thumbnail.message}
-              </p>
+              <p className="text-red-500 text-sm mt-1">{errors.thumbnail.message}</p>
             )}
-
           {preview && (
-            <img src={preview} alt="Preview" className="w-32 h-auto rounded" />
+            <img src={preview} alt="Preview" className="w-32 h-auto rounded mt-2" />
           )}
         </div>
 
@@ -121,11 +143,6 @@ const AddProjectPage = () => {
             {...register("subTitle")}
             className="outline-none border border-gray-300 px-4 py-2 rounded-lg w-full"
           />
-          {errors.subTitle && (
-            <p className="text-red-500 mt-1 text-sm">
-              {errors.subTitle.message}
-            </p>
-          )}
         </div>
 
         <div>
@@ -136,9 +153,7 @@ const AddProjectPage = () => {
             className="outline-none border border-gray-300 px-4 py-2 rounded-lg w-full"
           />
           {errors.sourceLink && (
-            <p className="text-red-500 mt-1 text-sm">
-              {errors.sourceLink.message}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.sourceLink.message}</p>
           )}
         </div>
 
@@ -150,22 +165,20 @@ const AddProjectPage = () => {
             className="outline-none border border-gray-300 px-4 py-2 rounded-lg w-full"
           />
           {errors.liveLink && (
-            <p className="text-red-500 mt-1 text-sm">
-              {errors.liveLink.message}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.liveLink.message}</p>
           )}
         </div>
 
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isUpdating}
           className="bg-primary px-4 py-2.5 rounded-lg text-white font-semibold disabled:bg-primary/60"
         >
-          {isLoading ? "Creating..." : "Create Project"}
+          {isUpdating ? "Updating..." : "Update Project"}
         </button>
       </form>
     </section>
   );
 };
 
-export default AddProjectPage;
+export default EditProjectPage;

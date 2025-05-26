@@ -23,7 +23,7 @@ const BlogCard = ({ blog }: { blog: IBlog }) => {
         <img
           src={blog.thumbnail}
           alt="Course Thumbnail"
-          className="w-full rounded-lg"
+          className="w-full rounded-lg h-[230px] object-cover"
         />
       ) : (
         <div className="bg-gray-300 h-[250px] w-full rounded-lg"></div>

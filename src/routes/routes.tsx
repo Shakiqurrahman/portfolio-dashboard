@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import DashboardLayout from "../components/Layouts/DashboardLayout";
 import AddProjectPage from "../pages/AddProjectPage";
 import BlogManagementPage from "../pages/BlogManagementPage";
+import EditProjectPage from "../pages/EditProjectPage";
 import ErrorPage from "../pages/ErrorPage";
 import LoginPage from "../pages/LoginPage";
 import ProjectManagementPage from "../pages/ProjectManagementPage";
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
       {
         path: "/project-management/add-project",
         element: <AddProjectPage />,
+      },
+      {
+        path: "/project-management/edit/:projectId",
+        element: <EditProjectPage />,
       },
       {
         path: "/blog-management",

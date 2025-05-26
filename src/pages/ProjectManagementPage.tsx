@@ -24,7 +24,7 @@ const ProjectManagementPage = () => {
         </Link>
       </div>
       <p className="text-sm text-gray-600">Display all the project list.</p>
-      <div className="mt-5 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="mt-5 grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
         {!isLoading && projects?.length === 0 ? (
           <p>Project not found!</p>
         ) : (

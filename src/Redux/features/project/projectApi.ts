@@ -8,18 +8,18 @@ const projectApi = baseApi.injectEndpoints({
         method: "POST",
         body: projectInfo,
       }),
+      invalidatesTags: ["project"],
     }),
 
     getAllProjects: builder.query({
-      query: () => ({
-        url: "/projects",
-      }),
+      query: () => ({ url: "/projects" }),
+      providesTags: ["project"],
     }),
 
     getProjectById: builder.query({
-      query: (projectId) => ({
-        url: `/projects/${projectId}`,
-      }),
+      query: (projectId) => ({ url: `/projects/${projectId}` }),
+      providesTags: ["project"],
+      transformResponse: (res) => res.data,
     }),
 
     updateProject: builder.mutation({
@@ -28,6 +28,7 @@ const projectApi = baseApi.injectEndpoints({
         method: "PUT",
         body: payload,
       }),
+      invalidatesTags: ["project"],
     }),
 
     deleteProject: builder.mutation({
@@ -35,6 +36,7 @@ const projectApi = baseApi.injectEndpoints({
         url: `/projects/${blogId}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["project"],
     }),
   }),
 });
