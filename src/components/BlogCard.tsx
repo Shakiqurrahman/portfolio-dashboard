@@ -1,21 +1,39 @@
+import toast from "react-hot-toast";
 import { FiEdit3 } from "react-icons/fi";
 import { GoTrash } from "react-icons/go";
 import { MdEditCalendar } from "react-icons/md";
 import { Link } from "react-router";
+import { useDeleteBlogMutation } from "../Redux/features/blog/blogApi";
 import type { IBlog } from "../types";
 import { formatDate } from "../utils/formatDate";
 
 const BlogCard = ({ blog }: { blog: IBlog }) => {
+  const [deleteBlog, { isLoading }] = useDeleteBlogMutation();
+
+  const handleDeleteBlog = async (blogId: string) => {
+    try {
+      await deleteBlog(blogId).unwrap();
+      toast.success("Blog deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete!");
+      console.log(error);
+    }
+  };
   return (
     <div className="bg-white rounded-lg p-5 group relative overflow-hidden">
       <div className="absolute right-[12px] top-[12px] flex flex-col gap-2 translate-x-[150%] group-hover:translate-x-0 duration-300">
         <Link
-          to="edit"
+          to={`edit/${blog.id}`}
           className="hover:bg-primary bg-white border border-gray-300 hover:text-white p-2 rounded-lg"
         >
           <FiEdit3 className="size-4" />
         </Link>
-        <button className="hover:bg-red-700 bg-white border border-gray-300 hover:text-white p-2 rounded-lg cursor-pointer">
+        <button
+          type="button"
+          disabled={isLoading}
+          onClick={() => handleDeleteBlog(blog.id)}
+          className="hover:bg-red-700 bg-white border border-gray-300 hover:text-white p-2 rounded-lg cursor-pointer disabled:opacity-65"
+        >
           <GoTrash className="size-4" />
         </button>
       </div>

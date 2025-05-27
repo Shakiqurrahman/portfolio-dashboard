@@ -1,7 +1,9 @@
 import { createBrowserRouter } from "react-router";
 import DashboardLayout from "../components/Layouts/DashboardLayout";
+import AddBlogPage from "../pages/AddBlogPage";
 import AddProjectPage from "../pages/AddProjectPage";
 import BlogManagementPage from "../pages/BlogManagementPage";
+import EditBlogPage from "../pages/EditBlogPage";
 import EditProjectPage from "../pages/EditProjectPage";
 import ErrorPage from "../pages/ErrorPage";
 import LoginPage from "../pages/LoginPage";
@@ -40,6 +42,14 @@ export const router = createBrowserRouter([
       {
         path: "/blog-management",
         element: <BlogManagementPage />,
+      },
+      {
+        path: "/blog-management/add-blog",
+        element: <AddBlogPage />,
+      },
+      {
+        path: "/blog-management/edit/:blogId",
+        element: <EditBlogPage />,
       },
     ],
   },

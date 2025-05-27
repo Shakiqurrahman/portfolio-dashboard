@@ -43,7 +43,6 @@ const EditProjectPage = () => {
     resolver: zodResolver(projectSchema),
   });
 
-  // Populate the form once data is fetched
   useEffect(() => {
     if (data) {
       setValue("title", data.title);

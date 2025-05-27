@@ -38,7 +38,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
     });
 
     const data = await res.json();
-    console.log("🚀 ~ >= ~ data:", data)
+    console.log("🚀 ~ >= ~ data:", data);
 
     if (data?.data) {
       const user = (api.getState() as RootState).auth.user;
@@ -63,6 +63,6 @@ export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithRefreshToken,
   refetchOnMountOrArgChange: true,
-  tagTypes: ["user", "project"],
+  tagTypes: ["user", "project", "blog"],
   endpoints: () => ({}),
 });
